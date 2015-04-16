@@ -1,5 +1,5 @@
-__author__ = 'IFT-1004-H2015'
-__date__ = "12 mars 2015"
+__author__ = 'Ibrahim Kamara et Cristi Margineanu'
+__date__ = "15 avril 2015"
 
 """Ce fichier permet de définir la classe Partie permettant de jouer au jeu Tic-Tac-Toe"""
 

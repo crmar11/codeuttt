@@ -1,2 +1,2 @@
-__author__ = 'IFT-1004-H2015'
-__date__ = "05 avril 2015"
+__author__ = 'Ibrahim Kamara et Cristi Margineanu'
+__date__ = "15 avril 2015"
