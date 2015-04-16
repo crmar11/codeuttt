@@ -1,4 +1,4 @@
-__authors__ = Cristi Margineanu et Ibraim Kamara
+__authors__ = Cristi Margineanu et Ibrahim Kamara
 __date__ = "Ajoutez la date de remise"
 
 """Ce fichier permet de...(complétez la description de ce que
