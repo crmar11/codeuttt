@@ -72,6 +72,12 @@ class Fenetre(Tk):
                 self.canvas_uplateau[i,j].grid()
                 # On lie un clic sur le Canvas à une méthode.
                 self.canvas_uplateau[i,j].bind('<Button-1>', self.selectionner)
+        self.grid_columnconfigure(0,weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1,weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(2,weight=1)
+        self.grid_rowconfigure(2, weight=1)
 
         # Ajout d'une étiquette d'information.
         self.messages = Label(self)
