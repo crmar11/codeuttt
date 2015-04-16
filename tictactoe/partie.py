@@ -1,4 +1,4 @@
- __author__ = 'IFT-1004-H2015'
+__author__ = 'IFT-1004-H2015'
 __date__ = "05 avril 2015"
 
 """Ce fichier permet de définir la classe Partie permettant de jouer au jeu Ultimate Tic-Tac-Toe"""
