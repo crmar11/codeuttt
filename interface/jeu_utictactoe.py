@@ -13,6 +13,7 @@ class CanvasPlateau(Canvas):
     """
         À completer !.
     """
+
     def __init__(self, parent, plateau, taille_case=60):
 
         # Une instance d'un des 9 plateaux du jeu ultimate Tic-Tac-Toe.
@@ -41,13 +42,14 @@ class CanvasPlateau(Canvas):
                 fin_colonne = debut_colonne + self.taille_case
                 # On dessine le rectangle représentant une case!
                 self.create_rectangle(debut_colonne, debut_ligne, fin_colonne, fin_ligne,
-                                      fill='#e1e1e1', width = 2, outline = "white")
+                                      fill='#e1e1e1', width=2, outline="white")
 
 
 class Fenetre(Tk):
     """
         À completer !.
     """
+
     def __init__(self):
         """
             À completer !.
@@ -68,15 +70,33 @@ class Fenetre(Tk):
             for j in range(0, 3):
                 cadre = Frame(self, borderwidth=5, relief=GROOVE)
                 cadre.grid(row=i, column=j, padx=5, pady=5)
-                self.canvas_uplateau[i,j] = CanvasPlateau(cadre, self.partie.uplateau[i,j])
-                self.canvas_uplateau[i,j].grid()
+                cadre.columnconfigure(0, weight=1)
+                cadre.rowconfigure(0, weight=1)
+                cadre.columnconfigure(1, weight=1)
+                cadre.rowconfigure(1, weight=1)
+                cadre.columnconfigure(2, weight=1)
+                cadre.rowconfigure(2, weight=1)
+                #cadre.columnconfigure(j, weight=1)
+                #cadre.rowconfigure(i, weight=1)
+                self.canvas_uplateau[i, j] = CanvasPlateau(cadre, self.partie.uplateau[i, j])
+                self.canvas_uplateau[i, j].grid()
+                self.canvas_uplateau[i, j].columnconfigure(0, weight=1)
+                self.canvas_uplateau[i, j].rowconfigure(0, weight=1)
+                self.canvas_uplateau[i, j].columnconfigure(1, weight=1)
+                self.canvas_uplateau[i, j].rowconfigure(1, weight=1)
+                self.canvas_uplateau[i, j].columnconfigure(2, weight=1)
+                self.canvas_uplateau[i, j].rowconfigure(2, weight=1)
                 # On lie un clic sur le Canvas à une méthode.
-                self.canvas_uplateau[i,j].bind('<Button-1>', self.selectionner)
-        self.grid_columnconfigure(0,weight=1)
+                self.canvas_uplateau[i, j].bind('<Button-1>', self.selectionner)
+
+
+        #Pour redimensionner automatiquement la fenêtre principale
+
+        self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(1,weight=1)
+        self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(1, weight=1)
-        self.grid_columnconfigure(2,weight=1)
+        self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(2, weight=1)
 
         # Ajout d'une étiquette d'information.
@@ -88,7 +108,7 @@ class Fenetre(Tk):
         # Vous pouvez également déplacer ce code dans une autre méthode selon votre propre solution.
         p1 = Joueur("VotreNom", "Personne", 'X')
         p2 = Joueur("Colosse", "Ordinateur", 'O')
-        self.partie.joueurs = [p1,p2]
+        self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
 
     def selectionner(self, event):
@@ -111,10 +131,10 @@ class Fenetre(Tk):
         coordonnee_y = ligne * event.widget.taille_case + event.widget.taille_case // 2
         coordonnee_x = colonne * event.widget.taille_case + event.widget.taille_case // 2
         event.widget.create_text(coordonnee_x, coordonnee_y, text=self.partie.joueur_courant.pion,
-                                 font=('Helvetica', event.widget.taille_case//2), tags='pion')
+                                 font=('Helvetica', event.widget.taille_case // 2), tags='pion')
 
         # Mettre à jour la case sélectionnée
-        self.partie.uplateau[event.widget.plateau.cordonnees_parent]\
+        self.partie.uplateau[event.widget.plateau.cordonnees_parent] \
             .selectionner_case(ligne, colonne, self.partie.joueur_courant.pion)
 
         # Changer le joueur courant.
