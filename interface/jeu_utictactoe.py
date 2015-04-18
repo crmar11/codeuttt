@@ -122,7 +122,7 @@ class Fenetre(Tk):
 
         # Les bouttons en dessous
         B1 = Button(self, text='Règles', width=12, command=self.regles).grid(row=5,column=0)
-        B2 = Button(self, text='Recommancer', width=12, command=self.recommancer).grid(row=5, column=1)
+        B2 = Button(self, text='Recommencer', width=12, command=self.recommancer).grid(row=5, column=1)
         B3 = Button(self, text='Statistiques', width=12, command=self.regles).grid(row=5, column=2)
         B4 = Button(self, text='Historique', width=12, command=self.regles).grid(row=6, column=1)
         B5 = Button(self, text='Quitter', width=5, command=self.quitter).grid(row=6, column=2)
