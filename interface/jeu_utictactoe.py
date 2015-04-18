@@ -128,13 +128,24 @@ class Fenetre(Tk):
         B5 = Button(self, text='Quitter', width=5, command=self.quitter).grid(row=6, column=2)
         B5 = Button(self, text='Rien', width=12, command=self.regles).grid(row=6, column=0)
 
-    def DateEtChrono(self):
-        print(str(time.tzinfo))
+    #def DateEtChrono(self):
+    #    print(str(time.tzinfo))
 
     def JoueursDuJeux(self):
 
         p1 = Joueur("VotreNom", "Personne", 'X')
         p2 = Joueur("Colosse", "Ordinateur", 'O')
+
+        # MessageBox pour savoir si le deuxieme joueur est une personne ou un ordinateur
+     #   p2Type = messagebox.askyesnocancel("Type de joueur", "Jouez-vous avec un deuxième joueur ? \nSi non l'ordinateur Colosse le remplacera.")
+
+     #   if p2Type == True:
+     #       p2.type = "Personne"
+     #   else:
+     #       p2.type = "Ordinateur"
+
+
+
         self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
 
@@ -175,12 +186,14 @@ class Fenetre(Tk):
                     or self.partie.uplateau[event.widget.plateau.cordonnees_parent].est_gagnant("O"):
                 raise ErreurCase("Le plateau est déja gagnant")
 
-            # On verifie si la case est vide
+            # On verifie si la case clicé est vide
             if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].cases[ligne, colonne].est_vide():
                 raise ErreurCase("La case est déjà prise !")
+
             # On verifie si la position est valide
             if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].position_valide(ligne, colonne):
                 raise ErreurCase("La position n'est pas valide !")
+
             # On verifie si on clic dans la bonne prochaine case
             if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].position_valide(ligne, colonne):
                 raise ErreurCase("Ce tour doit être joué dans la case en rouge !")
@@ -239,10 +252,12 @@ class Fenetre(Tk):
     def sortir_frame(self, event):
         event.widget['background'] = '#e1e1e1'
 
+class FenetreJoueurs():
+    pass
 
 
 
-
+# Regles du jeux en chaine de caractères
 reglesdujeux = (str("Règles du jeu:\
     \n1. Le premier joueur peut faire un pas dans n'importe quelle cellule.\
     \n\n2. La position de la cellule sélectionnée au sein de ce mini carré correspond \
