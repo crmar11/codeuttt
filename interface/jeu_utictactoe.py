@@ -1,5 +1,5 @@
 __authors__ = "Cristi Margineanu et Ibrahim Kamara"
-__date__ = "15 avril 2015"
+__date__ = "18 avril 2015"
 
 """Ce fichier permet de...(complétez la description de ce que
 ce fichier est supposé faire ! """
@@ -131,10 +131,26 @@ class Fenetre(Tk):
     def DateEtChrono(self):
         print(str(time.tzinfo))
 
+    #def JoueursDuJeux(self):
+
+        #p1 = Joueur("VotreNom", "Personne", 'X')
+        #p2 = Joueur("Colosse", "Ordinateur", 'O')
+        #self.partie.joueurs = [p1, p2]
+        #self.partie.joueur_courant = p1
+
     def JoueursDuJeux(self):
 
         p1 = Joueur("VotreNom", "Personne", 'X')
         p2 = Joueur("Colosse", "Ordinateur", 'O')
+
+        # MessageBox pour savoir si le deuxieme joueur est une personne ou un ordinateur
+        p2Type = messagebox.askyesno("Type de joueur", "Jouez-vous avec un deuxième joueur ? \nSi non l'ordinateur Colosse le remplacera.")
+
+        if p2Type == True:
+            p2.type = "Personne"
+        else:
+            p2.type = "Ordinateur"
+
         self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
 
