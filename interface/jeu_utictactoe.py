@@ -1,5 +1,5 @@
 __authors__ = "Cristi Margineanu et Ibrahim Kamara"
-__date__ = "15 avril 2015"
+__date__ = "19 avril 2015"
 
 """Ce fichier permet de...(complétez la description de ce que
 ce fichier est supposé faire ! """
@@ -137,14 +137,12 @@ class Fenetre(Tk):
         p2 = Joueur("Colosse", "Ordinateur", 'O')
 
         # MessageBox pour savoir si le deuxieme joueur est une personne ou un ordinateur
-     #   p2Type = messagebox.askyesnocancel("Type de joueur", "Jouez-vous avec un deuxième joueur ? \nSi non l'ordinateur Colosse le remplacera.")
+        p2Type = messagebox.askyesno("Type de joueur", "Jouez-vous avec un deuxième joueur ? \nSi non l'ordinateur Colosse le remplacera.")
 
-     #   if p2Type == True:
-     #       p2.type = "Personne"
-     #   else:
-     #       p2.type = "Ordinateur"
-
-
+        if p2Type == True:
+            p2.type = "Personne"
+        else:
+            p2.type = "Ordinateur"
 
         self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
@@ -252,8 +250,6 @@ class Fenetre(Tk):
     def sortir_frame(self, event):
         event.widget['background'] = '#e1e1e1'
 
-class FenetreJoueurs():
-    pass
 
 
 
