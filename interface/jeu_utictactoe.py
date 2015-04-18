@@ -7,6 +7,7 @@ ce fichier est supposé faire ! """
 from tkinter import Tk, Canvas, Label, Frame, GROOVE, messagebox, Button
 from tictactoe.partie import Partie
 from tictactoe.joueur import Joueur
+from _datetime import time
 
 class ErreurCase(Exception):
     pass
@@ -81,9 +82,10 @@ class Fenetre(Tk):
                 #cadre.columnconfigure(j, weight=1)
                 #cadre.rowconfigure(i, weight=1)
 
-                #Dessiner le pion si la sourie entre dans la case
+                #Dessiner le cadre en jaune si la sourie entre dans le cadre
                 cadre.bind('<Enter>', self.entrer_frame)
                 cadre.bind('<Leave>', self.sortir_frame)
+
                 self.canvas_uplateau[i, j] = CanvasPlateau(cadre, self.partie.uplateau[i, j])
                 self.canvas_uplateau[i, j].grid()
                 self.canvas_uplateau[i, j].columnconfigure(0, weight=1)
@@ -108,19 +110,54 @@ class Fenetre(Tk):
         # Ajout d'une étiquette d'information.
         self.messages = Label(self)
         self.messages.grid(columnspan=3)
+        # Ajout d'une étiquette pour le nom des joueurs.
+        self.Noms = Label(self)
+        self.Noms.grid(column=4, row=0, rowspan=2)
+        # Ajout d'une étoquette pour la date et le chronometre.
+        self.Date = Label(self)
+        self.Date.grid(column=4, row=1, columnspan=2)
 
-        # Création de deux joueurs. Ce code doit être bien sûr modifié,
-        # car il faut chercher ces infos dans les widgets de la fenêtre.
-        # Vous pouvez également déplacer ce code dans une autre méthode selon votre propre solution.
+        # Création de deux joueurs.
+        self.JoueursDuJeux()
+
+        # Les bouttons en dessous
+        B1 = Button(self, text='Règles', width=12, command=self.regles).grid(row=5,column=0)
+        B2 = Button(self, text='Recommancer', width=12, command=self.recommancer).grid(row=5, column=1)
+        B3 = Button(self, text='Statistiques', width=12, command=self.regles).grid(row=5, column=2)
+        B4 = Button(self, text='Historique', width=12, command=self.regles).grid(row=6, column=1)
+        B5 = Button(self, text='Quitter', width=5, command=self.quitter).grid(row=6, column=2)
+        B5 = Button(self, text='Rien', width=12, command=self.regles).grid(row=6, column=0)
+
+    def DateEtChrono(self):
+        print(str(time.tzinfo))
+
+    def JoueursDuJeux(self):
+
         p1 = Joueur("VotreNom", "Personne", 'X')
         p2 = Joueur("Colosse", "Ordinateur", 'O')
         self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
 
+    def quitter(self):
+        quitter_r = messagebox.askyesno("Fermer ?", message="Voullez vous vraiment quitter?",)
+        if quitter_r == True:
+            self.quit()
 
-        B1 = Button(self, text='Règles', width=8, command=self.regles).grid(row=4, column=1)
+    def recommancer(self):
+        """
+            Permet d'effacer le dictionnaire des 9 plateau et d'effacer
+            les tags 'pion' de chaque canvas, pour ainsi recommancer le jeux.
+        """
+        for i in range(0, 3):
+            for j in range(0, 3):
+                self.partie.uplateau[i, j].initialiser()
+                self.canvas_uplateau[i, j].delete('pion')
+                self.afficher_message("")
 
     def regles(self):
+        """
+            Permet de faire apparaitre une MessageBox avec les règles.
+        """
         messagebox.showinfo('Règles du jeux', reglesdujeux)
 
     def selectionner(self, event):
@@ -128,14 +165,26 @@ class Fenetre(Tk):
             À completer !.
         """
         try:
-
             # On trouve le numéro de ligne/colonne en divisant par le nombre de pixels par case.
             # event.widget représente ici un des 9 canvas !
             ligne = event.y // event.widget.taille_case
             colonne = event.x // event.widget.taille_case
 
+            # On verifie si la case est gagnante
+            if self.partie.uplateau[event.widget.plateau.cordonnees_parent].est_gagnant("X")\
+                    or self.partie.uplateau[event.widget.plateau.cordonnees_parent].est_gagnant("O"):
+                raise ErreurCase("Le plateau est déja gagnant")
+
+            # On verifie si la case est vide
             if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].cases[ligne, colonne].est_vide():
                 raise ErreurCase("La case est déjà prise !")
+            # On verifie si la position est valide
+            if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].position_valide(ligne, colonne):
+                raise ErreurCase("La position n'est pas valide !")
+            # On verifie si on clic dans la bonne prochaine case
+            if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].position_valide(ligne, colonne):
+                raise ErreurCase("Ce tour doit être joué dans la case en rouge !")
+
 
             self.afficher_message("Case sélectionnée à la position (({},{}),({},{}))."
                                   .format(event.widget.plateau.cordonnees_parent[0],
@@ -163,13 +212,22 @@ class Fenetre(Tk):
 
             # Effacer le contenu du widget (canvas) et du plateau (dictionnaire) quand ce dernier devient plein.
             # Vous pouvez modifier ou déplacer ce code dans une autre méthode selon votre propre solution.
-            if not event.widget.plateau.non_plein():
+            if not event.widget.plateau.non_plein() and not event.widget.plateau.est_gagnant("X") \
+                    and not event.widget.plateau.est_gagnant("O"):
                 event.widget.delete('pion')
                 event.widget.plateau.initialiser()
+                # Afficher label de partie nule
+                self.afficher_message("Partie nule dans la case({},{})."
+                                  .format(event.widget.plateau.cordonnees_parent[0],
+                                          event.widget.plateau.cordonnees_parent[1]))
+
+                # Augmenter le nombre de parties nules de 1
+                self.partie.nb_parties_nulles += 1
+
         except ErreurCase as e:
             self.afficher_message(str(e), color='red')
 
-    def afficher_message(self, message, color = 'black'):
+    def afficher_message(self, message, color='black'):
         """
             Permet d'afficher un message (en bas de page)
         """
@@ -180,6 +238,10 @@ class Fenetre(Tk):
         event.widget['background'] = 'yellow'
     def sortir_frame(self, event):
         event.widget['background'] = '#e1e1e1'
+
+
+
+
 
 reglesdujeux = (str("Règles du jeu:\
     \n1. Le premier joueur peut faire un pas dans n'importe quelle cellule.\
