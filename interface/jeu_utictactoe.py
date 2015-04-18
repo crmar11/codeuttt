@@ -1,5 +1,5 @@
 __authors__ = "Cristi Margineanu et Ibrahim Kamara"
-__date__ = "18 avril 2015"
+__date__ = "19 avril 2015"
 
 """Ce fichier permet de...(complétez la description de ce que
 ce fichier est supposé faire ! """
