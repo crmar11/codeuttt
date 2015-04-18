@@ -4,10 +4,12 @@ __date__ = "15 avril 2015"
 """Ce fichier permet de...(complétez la description de ce que
 ce fichier est supposé faire ! """
 
-from tkinter import Tk, Canvas, Label, Frame, GROOVE
+from tkinter import Tk, Canvas, Label, Frame, GROOVE, messagebox, Button
 from tictactoe.partie import Partie
 from tictactoe.joueur import Joueur
 
+class ErreurCase(Exception):
+    pass
 
 class CanvasPlateau(Canvas):
     """
@@ -68,7 +70,7 @@ class Fenetre(Tk):
         # Création des frames et des canvas du jeu
         for i in range(0, 3):
             for j in range(0, 3):
-                cadre = Frame(self, borderwidth=5, relief=GROOVE)
+                cadre = Frame(self, borderwidth=5, relief=GROOVE, background = '#e1e1e1')
                 cadre.grid(row=i, column=j, padx=5, pady=5)
                 cadre.columnconfigure(0, weight=1)
                 cadre.rowconfigure(0, weight=1)
@@ -78,6 +80,10 @@ class Fenetre(Tk):
                 cadre.rowconfigure(2, weight=1)
                 #cadre.columnconfigure(j, weight=1)
                 #cadre.rowconfigure(i, weight=1)
+
+                #Dessiner le pion si la sourie entre dans la case
+                cadre.bind('<Enter>', self.entrer_frame)
+                cadre.bind('<Leave>', self.sortir_frame)
                 self.canvas_uplateau[i, j] = CanvasPlateau(cadre, self.partie.uplateau[i, j])
                 self.canvas_uplateau[i, j].grid()
                 self.canvas_uplateau[i, j].columnconfigure(0, weight=1)
@@ -111,49 +117,80 @@ class Fenetre(Tk):
         self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
 
+
+        B1 = Button(self, text='Règles', width=8, command=self.regles).grid(row=4, column=1)
+
+    def regles(self):
+        messagebox.showinfo('Règles du jeux', reglesdujeux)
+
     def selectionner(self, event):
         """
             À completer !.
         """
-        # On trouve le numéro de ligne/colonne en divisant par le nombre de pixels par case.
-        # event.widget représente ici un des 9 canvas !
-        ligne = event.y // event.widget.taille_case
-        colonne = event.x // event.widget.taille_case
+        try:
 
-        self.afficher_message("Case sélectionnée à la position (({},{}),({},{}))."
-                              .format(event.widget.plateau.cordonnees_parent[0],
-                                      event.widget.plateau.cordonnees_parent[1],
-                                      ligne, colonne))
+            # On trouve le numéro de ligne/colonne en divisant par le nombre de pixels par case.
+            # event.widget représente ici un des 9 canvas !
+            ligne = event.y // event.widget.taille_case
+            colonne = event.x // event.widget.taille_case
 
-        # On dessine le pion dans le canvas, au centre de la case.
-        # On utilise l'attribut "tags" pour être en mesure de récupérer
-        # les éléments dans le canvas afin de les effacer par exemple.
-        coordonnee_y = ligne * event.widget.taille_case + event.widget.taille_case // 2
-        coordonnee_x = colonne * event.widget.taille_case + event.widget.taille_case // 2
-        event.widget.create_text(coordonnee_x, coordonnee_y, text=self.partie.joueur_courant.pion,
-                                 font=('Helvetica', event.widget.taille_case // 2), tags='pion')
+            if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].cases[ligne, colonne].est_vide():
+                raise ErreurCase("La case est déjà prise !")
 
-        # Mettre à jour la case sélectionnée
-        self.partie.uplateau[event.widget.plateau.cordonnees_parent] \
-            .selectionner_case(ligne, colonne, self.partie.joueur_courant.pion)
+            self.afficher_message("Case sélectionnée à la position (({},{}),({},{}))."
+                                  .format(event.widget.plateau.cordonnees_parent[0],
+                                          event.widget.plateau.cordonnees_parent[1],
+                                          ligne, colonne))
 
-        # Changer le joueur courant.
-        # Vous pouvez modifier ou déplacer ce code dans une autre méthode selon votre propre solution.
-        if self.partie.joueur_courant == self.partie.joueurs[0]:
-            self.partie.joueur_courant = self.partie.joueurs[1]
-        else:
-            self.partie.joueur_courant = self.partie.joueurs[0]
+            # On dessine le pion dans le canvas, au centre de la case.
+            # On utilise l'attribut "tags" pour être en mesure de récupérer
+            # les éléments dans le canvas afin de les effacer par exemple.
+            coordonnee_y = ligne * event.widget.taille_case + event.widget.taille_case // 2
+            coordonnee_x = colonne * event.widget.taille_case + event.widget.taille_case // 2
+            event.widget.create_text(coordonnee_x, coordonnee_y, text=self.partie.joueur_courant.pion,
+                                     font=('Helvetica', event.widget.taille_case // 2), tags='pion')
 
-        # Effacer le contenu du widget (canvas) et du plateau (dictionnaire) quand ce dernier devient plein.
-        # Vous pouvez modifier ou déplacer ce code dans une autre méthode selon votre propre solution.
-        if not event.widget.plateau.non_plein():
-            event.widget.delete('pion')
-            event.widget.plateau.initialiser()
+            # Mettre à jour la case sélectionnée
+            self.partie.uplateau[event.widget.plateau.cordonnees_parent] \
+                .selectionner_case(ligne, colonne, self.partie.joueur_courant.pion)
 
-    def afficher_message(self, message):
+            # Changer le joueur courant.
+            # Vous pouvez modifier ou déplacer ce code dans une autre méthode selon votre propre solution.
+            if self.partie.joueur_courant == self.partie.joueurs[0]:
+                self.partie.joueur_courant = self.partie.joueurs[1]
+            else:
+                self.partie.joueur_courant = self.partie.joueurs[0]
+
+            # Effacer le contenu du widget (canvas) et du plateau (dictionnaire) quand ce dernier devient plein.
+            # Vous pouvez modifier ou déplacer ce code dans une autre méthode selon votre propre solution.
+            if not event.widget.plateau.non_plein():
+                event.widget.delete('pion')
+                event.widget.plateau.initialiser()
+        except ErreurCase as e:
+            self.afficher_message(str(e), color='red')
+
+    def afficher_message(self, message, color = 'black'):
         """
-            À completer !.
+            Permet d'afficher un message (en bas de page)
         """
-        self.messages['foreground'] = 'black'
+        self.messages['foreground'] = color
         self.messages['text'] = message
+
+    def entrer_frame(self, event):
+        event.widget['background'] = 'yellow'
+    def sortir_frame(self, event):
+        event.widget['background'] = '#e1e1e1'
+
+reglesdujeux = (str("Règles du jeu:\
+    \n1. Le premier joueur peut faire un pas dans n'importe quelle cellule.\
+    \n\n2. La position de la cellule sélectionnée au sein de ce mini carré correspond \
+à la position mini-carré sein de la grande place, où le second joueur doit alors placer un «O». \
+    \n\n3. Par la suite, les deux joueurs se relaient placer leur marque dans n'importe quelle cellule \
+vacants au sein de la mini-carré dictée par la position de la cellule marquée par le joueur précédent.\
+    \n\n4. Le premier gagnant de tic-tac-toe dans un carré mini-demeure le gagnant dans cette mini-carré pour \
+le reste de la partie.\
+    \n\n5. Si un joueur est envoyé à un mini carré qui a déjà été gagné, ou dans lesquels toutes les cellules\
+sont déjà remplies, alors le joueur peut ensuite placer sa marque dans n'importe quelle cellule \
+inoccupé dans un autre carré mini. \n\n source: \n \
+https://itunes.apple.com/fr/app/ultime-tic-tac-toe-hd-jeu/id672190466?mt=8"))
 
