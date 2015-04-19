@@ -9,7 +9,7 @@ from interface.jeu_utictactoe import Fenetre
 if __name__ == '__main__':
 
     ma_fenetre = Fenetre()
-    # Ouverture de la fenetre principale du jeu  au centre de celle de l'ordinateuré
+    # Ouverture de la fenetre principale du jeu  au centre de celle de l'ordinateure
     #Fait à partir des paramètres de 1366 x768
     ma_fenetre.geometry("692x689+350+0") #  dimension et position par defaut
     ma_fenetre.minsize(400, 300) # taille minimum de la fenetre
