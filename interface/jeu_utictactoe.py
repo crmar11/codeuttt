@@ -4,7 +4,7 @@ __date__ = "19 avril 2015"
 """Ce fichier permet de...(complétez la description de ce que
 ce fichier est supposé faire ! """
 
-from tkinter import Tk, Canvas, Label, Frame, GROOVE, messagebox, Button
+from tkinter import Tk, Canvas, Label, Frame, GROOVE, messagebox, Button,Radiobutton, StringVar, Entry
 from tictactoe.partie import Partie
 from tictactoe.joueur import Joueur
 from _datetime import time
@@ -46,6 +46,7 @@ class CanvasPlateau(Canvas):
                 # On dessine le rectangle représentant une case!
                 self.create_rectangle(debut_colonne, debut_ligne, fin_colonne, fin_ligne,
                                       fill='#e1e1e1', width=2, outline="white")
+
 
 
 class Fenetre(Tk):
@@ -128,15 +129,35 @@ class Fenetre(Tk):
         B5 = Button(self, text='Quitter', width=5, command=self.quitter).grid(row=6, column=2)
         B5 = Button(self, text='Rien', width=12, command=self.regles).grid(row=6, column=0)
 
+    #Le joueur peut choisir son pion
+
+        self.choix = StringVar()
+        b1 = Radiobutton(self, text="X", variable=self.choix, value='X')
+        b2 = Radiobutton(self, text="O", variable=self.choix, value='O')
+        b1.grid()
+        b2.grid()
+
+        self.choix.set('X')
+
+        #self.en = Entry(self)
+        #self.en.grid()
+
+        #bt = Button(self, text="Afficher", command=self.afficher)
+        #bt.grid()
+
+
+    def afficher(self):
+        messagebox.showinfo("Info", "Vous avez sélectionné: ")
+
+    #def desactiver_entry(self):
+        self.en['state'] = 'disabled'
+
+    #def activer_entry(self):
+        self.en['state'] = 'normal'
+
     def DateEtChrono(self):
         print(str(time.tzinfo))
 
-    #def JoueursDuJeux(self):
-
-        #p1 = Joueur("VotreNom", "Personne", 'X')
-        #p2 = Joueur("Colosse", "Ordinateur", 'O')
-        #self.partie.joueurs = [p1, p2]
-        #self.partie.joueur_courant = p1
 
     def JoueursDuJeux(self):
 
@@ -153,6 +174,8 @@ class Fenetre(Tk):
 
         self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
+
+
 
     def quitter(self):
         quitter_r = messagebox.askyesno("Fermer ?", message="Voullez vous vraiment quitter?",)
