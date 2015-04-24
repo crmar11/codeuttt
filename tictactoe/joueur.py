@@ -1,5 +1,5 @@
 __author__ = 'Ibrahim Kamara et Cristi Margineanu'
-__date__ = "15 avril 2015"
+__date__ = "24 avril 2015"
 
 """Ce fichier permet de définir la classe Joueur permettant de jouer au jeu Tic-Tac-Toe"""
 
@@ -23,8 +23,8 @@ class Joueur:
             pion (string): La forme du pion choisi (ou affecté) par le joueur ("O" ou "X")
         """
 
-        assert isinstance(nom, str), "Joeur: nom doit être une chaîne de caractères."
-        assert isinstance(type, str), "Joeur: type doit être une chaîne de caractères."
+        assert isinstance(nom, str), "Joueur: nom doit être une chaîne de caractères."
+        assert isinstance(type, str), "Joueur: type doit être une chaîne de caractères."
         assert type in ["Personne", "Ordinateur"], "Joueur: type doit être 'Personne' ou 'Ordinateur'."
         assert isinstance(pion, str), "Joueur: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Joueur: pion doit être 'O' ou 'X'."

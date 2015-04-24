@@ -1,5 +1,5 @@
 __author__ = 'Ibrahim Kamara et Cristi Margineanu'
-__date__ = "15 avril 2015"
+__date__ = "24 avril 2015"
 
 """Ce fichier permet de définir la classe Case permettant de jouer au jeu Tic-Tac-Toe"""
 

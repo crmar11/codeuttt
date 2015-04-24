@@ -1,10 +1,11 @@
 __authors__ = "Cristi Margineanu et Ibrahim Kamara"
-__date__ = "19 avril 2015"
+__date__ = "24 avril 2015"
 
-"""Ce fichier permet de...(complétez la description de ce que
-ce fichier est supposé faire ! """
+"""Ce fichier permet de definir les classes Fenêtre, CanvasPlateau permetant d'affichier
+l'espace de jeu Ultimate Tic-Tac-Toe !
+"""
 
-from tkinter import Tk, Canvas, Label, Frame, GROOVE, messagebox, Button
+from tkinter import Tk, Canvas, Label, Frame, GROOVE, messagebox, Button,Radiobutton, StringVar, Entry
 from tictactoe.partie import Partie
 from tictactoe.joueur import Joueur
 from _datetime import time
@@ -14,7 +15,13 @@ class ErreurCase(Exception):
 
 class CanvasPlateau(Canvas):
     """
-        À completer !.
+        Classe modélisant les cadres pour les 9 plateaux de jeu ultimate Tic-Tac-Toe!.
+
+        Attributes:
+            plateau (dictionary): Dictionnaire de plateaux. La clé est une position (ligne, colonne),
+                            et la valeur est une instance de la classe Plateau.
+            self.taille_case (int): Permet de definir la taille pour chaque case pour les 9 plateaux de jeux
+
     """
 
     def __init__(self, parent, plateau, taille_case=60):
@@ -35,7 +42,7 @@ class CanvasPlateau(Canvas):
 
     def dessiner_plateau(self):
         """
-            À completer !.
+        Methode permettant de dessiner les 9 carrés de jeu pour les 9 cadres du jeu Ultimate Tic-Tac-Toe .
         """
         for i in range(self.plateau.n_lignes):
             for j in range(self.plateau.n_colonnes):
@@ -50,12 +57,18 @@ class CanvasPlateau(Canvas):
 
 class Fenetre(Tk):
     """
-        À completer !.
+        Classe permettant de modéliser la fenêtre principale du jeu Ultimate Tic-Tac-Toe.
+        Attributes:
+            self.title (str): Le titre de la fenêtre de jeu principale.
+            self.partie (inst): Une instance e la Classe Partie permettant de lancer le jeu Ultimate Tic-Tac-Toe.
+            self.canvas_uplateau(dictionnaire): Dictionnaire de canvas. La clé est une position (ligne, colonne),
+                            et la valeur est une instance de la classe CanvasPlateau.
+
     """
 
     def __init__(self):
         """
-            À completer !.
+            Methode speciale initialisant une nouvelle fenêtre de jeu Ultimate Tic-Tac-Toe.
         """
         super().__init__()
 
@@ -68,7 +81,9 @@ class Fenetre(Tk):
         # Un ditionnaire contenant les 9 canvas des 9 plateaux du jeu
         self.canvas_uplateau = {}
 
-        # Création des frames et des canvas du jeu
+        self.choix = None
+
+        # Création des frames du jeu
         for i in range(0, 3):
             for j in range(0, 3):
                 cadre = Frame(self, borderwidth=5, relief=GROOVE, background = '#e1e1e1')
@@ -88,12 +103,7 @@ class Fenetre(Tk):
 
                 self.canvas_uplateau[i, j] = CanvasPlateau(cadre, self.partie.uplateau[i, j])
                 self.canvas_uplateau[i, j].grid()
-                self.canvas_uplateau[i, j].columnconfigure(0, weight=1)
-                self.canvas_uplateau[i, j].rowconfigure(0, weight=1)
-                self.canvas_uplateau[i, j].columnconfigure(1, weight=1)
-                self.canvas_uplateau[i, j].rowconfigure(1, weight=1)
-                self.canvas_uplateau[i, j].columnconfigure(2, weight=1)
-                self.canvas_uplateau[i, j].rowconfigure(2, weight=1)
+
                 # On lie un clic sur le Canvas à une méthode.
                 self.canvas_uplateau[i, j].bind('<Button-1>', self.selectionner)
 
@@ -122,14 +132,21 @@ class Fenetre(Tk):
 
         # Les bouttons en dessous
         B1 = Button(self, text='Règles', width=12, command=self.regles).grid(row=5,column=0)
-        B2 = Button(self, text='Recommancer', width=12, command=self.recommancer).grid(row=5, column=1)
+        B2 = Button(self, text='Recommencer', width=12, command=self.recommancer).grid(row=5, column=1)
         B3 = Button(self, text='Statistiques', width=12, command=self.regles).grid(row=5, column=2)
         B4 = Button(self, text='Historique', width=12, command=self.regles).grid(row=6, column=1)
         B5 = Button(self, text='Quitter', width=5, command=self.quitter).grid(row=6, column=2)
         B5 = Button(self, text='Rien', width=12, command=self.regles).grid(row=6, column=0)
 
-    #def DateEtChrono(self):
-    #    print(str(time.tzinfo))
+    def DateEtChrono(self):
+        print(str(time.tzinfo))
+
+    #def JoueursDuJeux(self):
+
+        #p1 = Joueur("VotreNom", "Personne", 'X')
+        #p2 = Joueur("Colosse", "Ordinateur", 'O')
+        #self.partie.joueurs = [p1, p2]
+        #self.partie.joueur_courant = p1
 
     def JoueursDuJeux(self):
 
@@ -155,7 +172,7 @@ class Fenetre(Tk):
     def recommancer(self):
         """
             Permet d'effacer le dictionnaire des 9 plateau et d'effacer
-            les tags 'pion' de chaque canvas, pour ainsi recommancer le jeux.
+            les tags 'pion' de chaque canvas, pour ainsi recommancer le jeux!
         """
         for i in range(0, 3):
             for j in range(0, 3):
@@ -171,7 +188,7 @@ class Fenetre(Tk):
 
     def selectionner(self, event):
         """
-            À completer !.
+            Cette methode permet de selectionner et placer son pion dans une des case des 9 plateaux de jeu.
         """
         try:
             # On trouve le numéro de ligne/colonne en divisant par le nombre de pixels par case.
