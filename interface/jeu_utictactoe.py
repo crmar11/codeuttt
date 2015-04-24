@@ -8,10 +8,12 @@ l'espace de jeu Ultimate Tic-Tac-Toe !
 from tkinter import Tk, Canvas, Label, Frame, GROOVE, messagebox, Button,Radiobutton, StringVar, Entry
 from tictactoe.partie import Partie
 from tictactoe.joueur import Joueur
-from _datetime import time
+from interface.popup import Popup
+from datetime import time
 
 class ErreurCase(Exception):
     pass
+
 
 class CanvasPlateau(Canvas):
     """
@@ -81,9 +83,11 @@ class Fenetre(Tk):
         # Un ditionnaire contenant les 9 canvas des 9 plateaux du jeu
         self.canvas_uplateau = {}
 
-        self.choix = None
+        # Création de deux joueurs.
+        self.JoueursDuJeux()
+        Popup()
 
-        # Création des frames du jeu
+        # Création des frames et des canvas du jeu
         for i in range(0, 3):
             for j in range(0, 3):
                 cadre = Frame(self, borderwidth=5, relief=GROOVE, background = '#e1e1e1')
@@ -119,27 +123,28 @@ class Fenetre(Tk):
 
         # Ajout d'une étiquette d'information.
         self.messages = Label(self)
-        self.messages.grid(columnspan=3)
+        self.messages.grid(column=0, row=4, columnspan=3)
         # Ajout d'une étiquette pour le nom des joueurs.
-        self.Noms = Label(self)
-        self.Noms.grid(column=4, row=0, rowspan=2)
-        # Ajout d'une étoquette pour la date et le chronometre.
-        self.Date = Label(self)
-        self.Date.grid(column=4, row=1, columnspan=2)
+        self.labNoms = Label(self)
+        self.labNoms.grid(column=0, row=5)
+        # Ajout d'une étiquette pour la date et le chronometre.
+        self.labDate = Label(self)
+        self.labDate.grid(column=0, row=6)
 
-        # Création de deux joueurs.
-        self.JoueursDuJeux()
 
         # Les bouttons en dessous
-        B1 = Button(self, text='Règles', width=12, command=self.regles).grid(row=5,column=0)
-        B2 = Button(self, text='Recommencer', width=12, command=self.recommancer).grid(row=5, column=1)
-        B3 = Button(self, text='Statistiques', width=12, command=self.regles).grid(row=5, column=2)
-        B4 = Button(self, text='Historique', width=12, command=self.regles).grid(row=6, column=1)
-        B5 = Button(self, text='Quitter', width=5, command=self.quitter).grid(row=6, column=2)
-        B5 = Button(self, text='Rien', width=12, command=self.regles).grid(row=6, column=0)
+        B1 = Button(self, text='Règles', width=15, command=self.regles).grid(row=7,column=0)
+        B2 = Button(self, text='Nouvelle Partie', width=15, command=self.nouvellePartie).grid(row=7, column=1)
+        B3 = Button(self, text='Statistiques', width=15, command=self.statistiques).grid(row=7, column=2)
+        B4 = Button(self, text='Historique', width=15, command=self.regles).grid(row=8, column=1)
+        B5 = Button(self, text='Quitter', width=5, command=self.quitter).grid(row=8, column=2)
+        B5 = Button(self, text='Tout recommencer', width=15, command=self.regles).grid(row=8, column=0)
 
-    def DateEtChrono(self):
-        print(str(time.tzinfo))
+
+
+
+    #def DateEtChrono(self):
+    #    print(str(time.tzinfo))
 
     #def JoueursDuJeux(self):
 
@@ -153,14 +158,6 @@ class Fenetre(Tk):
         p1 = Joueur("VotreNom", "Personne", 'X')
         p2 = Joueur("Colosse", "Ordinateur", 'O')
 
-        # MessageBox pour savoir si le deuxieme joueur est une personne ou un ordinateur
-        p2Type = messagebox.askyesno("Type de joueur", "Jouez-vous avec un deuxième joueur ? \nSi non l'ordinateur Colosse le remplacera.")
-
-        if p2Type == True:
-            p2.type = "Personne"
-        else:
-            p2.type = "Ordinateur"
-
         self.partie.joueurs = [p1, p2]
         self.partie.joueur_courant = p1
 
@@ -169,7 +166,7 @@ class Fenetre(Tk):
         if quitter_r == True:
             self.quit()
 
-    def recommancer(self):
+    def nouvellePartie(self):
         """
             Permet d'effacer le dictionnaire des 9 plateau et d'effacer
             les tags 'pion' de chaque canvas, pour ainsi recommancer le jeux!
@@ -178,13 +175,25 @@ class Fenetre(Tk):
             for j in range(0, 3):
                 self.partie.uplateau[i, j].initialiser()
                 self.canvas_uplateau[i, j].delete('pion')
-                self.afficher_message("")
+                self.afficher_message(" Nouvelle Partie")
+    def recommencer(self):
+        """
+            Permet de recommencer le jeux en réinitialisant les statistiques.
+        """
+        self.nouvellePartie()
+        self.partie.nb_parties_nulles = 0
+        self.p1.nb_parties_gagnes = 0
+        self.p2.nb_parties_gagnees = 0
+        self.afficher_message("Nouveau Jeux 0-0")
 
     def regles(self):
         """
             Permet de faire apparaitre une MessageBox avec les règles.
         """
         messagebox.showinfo('Règles du jeux', reglesdujeux)
+
+    def statistiques(self):
+        pass
 
     def selectionner(self, event):
         """
@@ -212,7 +221,6 @@ class Fenetre(Tk):
             # On verifie si on clic dans la bonne prochaine case
             if not self.partie.uplateau[event.widget.plateau.cordonnees_parent].position_valide(ligne, colonne):
                 raise ErreurCase("Ce tour doit être joué dans la case en rouge !")
-
 
             self.afficher_message("Case sélectionnée à la position (({},{}),({},{}))."
                                   .format(event.widget.plateau.cordonnees_parent[0],
@@ -257,16 +265,28 @@ class Fenetre(Tk):
 
     def afficher_message(self, message, color='black'):
         """
-            Permet d'afficher un message (en bas de page)
+            Permet d'afficher un message en label en bas du jeux
         """
         self.messages['foreground'] = color
         self.messages['text'] = message
+
+    def afficher_nom(self, message, color='black'):
+        """
+            Permet d'afficher un message en label
+        :param message:
+        :param color:
+        :return:
+        """
+
+        self.labNoms['foregrounnd'] = color
+        self.labNoms['text'] = message
+
+        self.afficher_nom("{} ({}) VS {} ({})".format(self.p1.nom, self.p1.pion, self.p2.nom, self.p2.pion))
 
     def entrer_frame(self, event):
         event.widget['background'] = 'yellow'
     def sortir_frame(self, event):
         event.widget['background'] = '#e1e1e1'
-
 
 
 
